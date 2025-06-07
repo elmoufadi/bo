@@ -57,14 +57,8 @@ class AuthController extends Controller
         // Connecter l'utilisateur
         Auth::login($utilisateur);
 
-        // Rediriger selon le rôle
-        if ($utilisateur->estAdmin()) {
-            return redirect()->route('dashboard.admin');
-        } elseif ($utilisateur->estOperateur()) {
-            return redirect()->route('dashboard.operateur');
-        }
-
-        return redirect()->route('dashboard.admin'); // fallback
+        // Rediriger vers le dashboard générique qui fera la redirection appropriée
+        return redirect()->route('dashboard');
     }
 
     /**
@@ -77,5 +71,25 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login')->with('success', 'Vous avez été déconnecté avec succès.');
+    }
+
+    /**
+     * Vérifier le statut de l'utilisateur connecté (utilitaire)
+     */
+    public function checkUserStatus()
+    {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return false;
+        }
+
+        // Si l'utilisateur n'est plus actif, le déconnecter
+        if (!$user->estActif()) {
+            Auth::logout();
+            return false;
+        }
+
+        return true;
     }
 }

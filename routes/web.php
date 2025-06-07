@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 // 📁 routes/web.php
 
 use App\Http\Controllers\AuthController;
@@ -22,17 +18,19 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });
 
-// Routes protégées par authentification
+// Routes protégées par authentification seulement
 Route::middleware('auth')->group(function () {
     // Déconnexion
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
-    // Dashboards selon les rôles
+    // Dashboards - la vérification des rôles se fait dans les contrôleurs
     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])
-        ->name('dashboard.admin')
-        ->middleware('check.role:admin');
+        ->name('dashboard.admin');
     
     Route::get('/dashboard/operateur', [DashboardController::class, 'operateur'])
-        ->name('dashboard.operateur')
-        ->middleware('check.role:operateur');
+        ->name('dashboard.operateur');
+        
+    // Route générique dashboard qui redirige selon le rôle
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 });
