@@ -11,10 +11,12 @@
             Messages
         </h1>
         <div>
-            <a href="{{ route('messages.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-2"></i>
-                Nouveau message
-            </a>
+            @if(auth()->user()->role !== 'admin')
+                <a href="{{ route('messages.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Nouveau message
+                </a>
+            @endif
         </div>
     </div>
 

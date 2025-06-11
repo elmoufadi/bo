@@ -68,7 +68,10 @@ class MessageController extends Controller
      */
     public function create()
     {
-        $services = Service::where('statut', 'actif')->get();
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('messages.index')->with('error', 'Admins cannot create new messages.');
+        }
+        $services = Service::all();
         return view('messages.create', compact('services'));
     }
 
@@ -77,6 +80,9 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('messages.index')->with('error', 'Admins cannot create new messages.');
+        }
         $request->validate([
             'expediteur' => 'required|string|max:200',
             'email_expediteur' => 'nullable|email|max:150',

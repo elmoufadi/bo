@@ -8,6 +8,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\PieceJointeController;
 use App\Http\Controllers\StatistiqueController;
+use App\Http\Controllers\UserController;
 
 // Page d'accueil - redirection vers login
 Route::get('/', function () {
@@ -123,5 +124,17 @@ Route::middleware('auth')->group(function () {
         
         // API pour graphiques temps réel
         Route::get('/api/dashboard', [StatistiqueController::class, 'apiDashboard'])->name('api-dashboard');
+    });
+
+    // === ROUTES UTILISATEURS (Admin seulement) ===
+    Route::middleware('check.role:admin')->prefix('users')->name('users.')->group(function () {
+        Route::resource('/', UserController::class)->except(['show']);
+    });
+
+    // === ROUTES PARAMÈTRES SYSTÈME (Admin seulement) ===
+    Route::middleware('check.role:admin')->prefix('system-settings')->name('system.settings.')->group(function () {
+        Route::get('/', function () {
+            return view('system-settings.index');
+        })->name('index');
     });
 });

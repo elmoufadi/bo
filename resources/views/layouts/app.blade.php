@@ -63,9 +63,21 @@
                                 <i class="fas fa-chart-bar"></i> Statistiques
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('users.index') }}">
+                                <i class="fas fa-users"></i> Utilisateurs
+                            </a>
+                        </li>
                     @endif
                 </ul>
                 <ul class="navbar-nav">
+                    @if(auth()->user()->estAdmin())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('system.settings.index') }}" title="Paramètres Système">
+                                <i class="fas fa-cogs"></i> 
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user"></i> {{ auth()->user()->nom }}
