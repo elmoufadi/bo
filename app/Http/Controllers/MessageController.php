@@ -156,6 +156,9 @@ class MessageController extends Controller
             'contenu' => 'required|string',
             'priorite' => 'required|in:normale,haute,urgente',
             'statut' => 'required|in:recu,distribue,traite',
+            'pieces_jointes.*' => 'nullable|file|max:10240', // 10MB max
+            'services' => 'nullable|array',
+            'services.*' => 'exists:services,id_service'
         ]);
 
         $message->update([
@@ -166,6 +169,20 @@ class MessageController extends Controller
             'priorite' => $request->priorite,
             'statut' => $request->statut,
         ]);
+
+        // Gérer les pièces jointes (ajout de nouvelles)
+        if ($request->hasFile('pieces_jointes')) {
+            foreach ($request->file('pieces_jointes') as $file) {
+                $this->ajouterPieceJointe($message, $file);
+            }
+        }
+
+        // Synchroniser les services concernés
+        if ($request->filled('services')) {
+            $message->services()->sync($request->services);
+        } else {
+            $message->services()->sync([]); // Détacher tous les services si aucun n'est sélectionné
+        }
 
         return redirect()->route('messages.show', $message->id_message)
                         ->with('success', 'Message mis à jour avec succès !');

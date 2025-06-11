@@ -1,267 +1,143 @@
 @extends('layouts.app')
 
-@section('title', 'Gestion des Messages')
+@section('title', 'Messages')
 
 @section('content')
 <div class="container-fluid">
-    <!-- En-tête -->
+    <!-- En-tête avec actions -->
     <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">
+            <i class="bi bi-envelope me-2"></i>
+            Messages
+        </h1>
         <div>
-            <h1 class="h3 mb-0">
-                <i class="bi bi-envelope-fill me-2 text-primary"></i>
-                Gestion des Messages
-            </h1>
-            <p class="text-muted mb-0">Bureau d'Ordre</p>
-        </div>
-        <div>
-            <button class="btn btn-primary">
-                <i class="bi bi-plus-circle me-2"></i>
-                Nouveau Message
-            </button>
+            <a href="{{ route('messages.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>
+                Nouveau message
+            </a>
         </div>
     </div>
 
-    <!-- Statistiques rapides -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4>25</h4>
-                            <p class="mb-0">Total Messages</p>
-                        </div>
-                        <i class="bi bi-envelope fs-1"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-secondary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4>8</h4>
-                            <p class="mb-0">Reçus</p>
-                        </div>
-                        <i class="bi bi-inbox fs-1"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4>12</h4>
-                            <p class="mb-0">Distribués</p>
-                        </div>
-                        <i class="bi bi-share fs-1"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4>3</h4>
-                            <p class="mb-0">Urgents</p>
-                        </div>
-                        <i class="bi bi-exclamation-triangle fs-1"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filtres simples -->
+    <!-- Filtres -->
     <div class="card mb-4">
         <div class="card-body">
-            <div class="row g-3">
+            <form action="{{ route('messages.index') }}" method="GET" class="row g-3">
                 <div class="col-md-3">
-                    <label class="form-label">Statut</label>
-                    <select class="form-select">
-                        <option value="">Tous les statuts</option>
-                        <option value="recu">Reçu</option>
-                        <option value="distribue">Distribué</option>
-                        <option value="traite">Traité</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Priorité</label>
-                    <select class="form-select">
-                        <option value="">Toutes les priorités</option>
-                        <option value="normale">Normale</option>
-                        <option value="haute">Haute</option>
-                        <option value="urgente">Urgente</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Recherche</label>
-                    <input type="text" class="form-control" placeholder="Rechercher...">
+                    <label for="search" class="form-label">Recherche</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ request('search') }}" placeholder="Rechercher...">
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label">&nbsp;</label>
-                    <div class="d-grid">
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class="bi bi-funnel me-1"></i>
-                            Filtrer
-                        </button>
-                    </div>
+                    <label for="priority" class="form-label">Priorité</label>
+                    <select class="form-select" id="priority" name="priority">
+                        <option value="">Toutes</option>
+                        <option value="normale" {{ request('priority') == 'normale' ? 'selected' : '' }}>Normale</option>
+                        <option value="haute" {{ request('priority') == 'haute' ? 'selected' : '' }}>Haute</option>
+                        <option value="urgente" {{ request('priority') == 'urgente' ? 'selected' : '' }}>Urgente</option>
+                    </select>
                 </div>
-            </div>
+                <div class="col-md-2">
+                    <label for="status" class="form-label">Statut</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">Tous</option>
+                        <option value="non_distribue" {{ request('status') == 'non_distribue' ? 'selected' : '' }}>Non distribué</option>
+                        <option value="distribue" {{ request('status') == 'distribue' ? 'selected' : '' }}>Distribué</option>
+                        <option value="traite" {{ request('status') == 'traite' ? 'selected' : '' }}>Traité</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="date" class="form-control" id="date" name="date" 
+                           value="{{ request('date') }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-2"></i>
+                        Filtrer
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- Liste des messages -->
     <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0">
-                <i class="bi bi-list me-2"></i>
-                Liste des Messages
-            </h5>
-        </div>
-        <div class="card-body p-0">
+        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
+                <table class="table table-hover">
+                    <thead>
                         <tr>
                             <th>Référence</th>
                             <th>Expéditeur</th>
                             <th>Objet</th>
-                            <th>Date</th>
                             <th>Priorité</th>
                             <th>Statut</th>
+                            <th>Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Messages d'exemple -->
-                        <tr>
-                            <td>
-                                <strong>MSG-2025-0001</strong>
-                            </td>
-                            <td>
-                                <div>
-                                    <div class="fw-medium">Jean Dupont</div>
-                                    <small class="text-muted">jean@example.com</small>
-                                </div>
-                            </td>
-                            <td>Demande d'information produits</td>
-                            <td>
-                                <div>09/06/2025</div>
-                                <small class="text-muted">14:30</small>
-                            </td>
-                            <td>
-                                <span class="badge bg-success">
-                                    <i class="bi bi-check-circle-fill me-1"></i>
-                                    Normale
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge bg-primary">
-                                    <i class="bi bi-share-fill me-1"></i>
-                                    Distribué
-                                </span>
-                            </td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" title="Voir">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-outline-secondary" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-outline-success" title="Marquer traité">
-                                        <i class="bi bi-check-lg"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong>MSG-2025-0002</strong>
-                            </td>
-                            <td>
-                                <div>
-                                    <div class="fw-medium">Marie Martin</div>
-                                    <small class="text-muted">marie@client.fr</small>
-                                </div>
-                            </td>
-                            <td>URGENT - Problème livraison</td>
-                            <td>
-                                <div>09/06/2025</div>
-                                <small class="text-muted">10:15</small>
-                            </td>
-                            <td>
-                                <span class="badge bg-danger">
-                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                                    Urgente
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge bg-secondary">
-                                    <i class="bi bi-inbox-fill me-1"></i>
-                                    Reçu
-                                </span>
-                            </td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" title="Voir">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-outline-secondary" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-outline-success" title="Marquer traité">
-                                        <i class="bi bi-check-lg"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong>MSG-2025-0003</strong>
-                            </td>
-                            <td>
-                                <div>
-                                    <div class="fw-medium">Service Client</div>
-                                    <small class="text-muted">contact@abc.com</small>
-                                </div>
-                            </td>
-                            <td>Réclamation produit défectueux</td>
-                            <td>
-                                <div>08/06/2025</div>
-                                <small class="text-muted">16:45</small>
-                            </td>
-                            <td>
-                                <span class="badge bg-warning text-dark">
-                                    <i class="bi bi-exclamation-circle-fill me-1"></i>
-                                    Haute
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge bg-success">
-                                    <i class="bi bi-check-circle-fill me-1"></i>
-                                    Traité
-                                </span>
-                            </td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" title="Voir">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-outline-secondary" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        @forelse($messages as $message)
+                            <tr>
+                                <td>{{ $message->reference }}</td>
+                                <td>{{ $message->expediteur }}</td>
+                                <td>{{ $message->objet }}</td>
+                                <td>
+                                    <span class="badge bg-{{ $message->priorite == 'urgente' ? 'danger' : ($message->priorite == 'haute' ? 'warning' : 'info') }}">
+                                        {{ ucfirst($message->priorite) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ $message->statut == 'traite' ? 'success' : ($message->statut == 'distribue' ? 'primary' : 'secondary') }}">
+                                        {{ ucfirst($message->statut) }}
+                                    </span>
+                                </td>
+                                <td>{{ $message->created_at->format('d/m/Y H:i') }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ route('messages.show', $message) }}" class="btn btn-info btn-sm" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('messages.edit', $message) }}" class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        @if($message->statut == 'non_distribue')
+                                            <form action="{{ route('messages.distribute', $message) }}" 
+                                                  method="POST" 
+                                                  class="d-inline">
+                                                @csrf
+                                                <button type="submit" 
+                                                        class="btn btn-sm btn-success" 
+                                                        title="Distribuer">
+                                                    <i class="bi bi-send"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                        <form action="{{ route('messages.destroy', $message) }}" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce message ?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <i class="bi bi-inbox text-muted fs-1 d-block mb-2"></i>
+                                    Aucun message trouvé
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ $messages->links() }}
             </div>
         </div>
     </div>
